@@ -1,0 +1,32 @@
+*{font-size:14px;font-family: "微软雅黑";}
+
+fieldset{
+	border:2px solid #ccc;
+	border-radius: 5px;
+	margin:20px;
+	padding:20px;
+}
+
+#filedrag{
+	border-radius:5px;
+	border:2px dotted #ccc;
+	height:80px;
+	text-align:center;
+	line-height:80px;
+	margin:20px 0;
+
+}
+
+#messages{
+	margin:20px;
+}
+.hover{
+	/* border-color:orange !important; */
+	box-shadow: 0 0 15px rgba(0,0,0,.7) inset;
+}
+#messages img{
+	width:120px;
+	height: 100px;
+	box-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+	margin:0 20px;
+}

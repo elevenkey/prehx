@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>剪贴板图片粘帖</title>
+</head>
+<body>
+
+	<div>在其他页面图片邮件选择复制图片，在本页Ctrl+v粘帖即可(只支持chrome)</div>  
+	<ol>
+		<li>event.clipboardData：访问剪切板</li>
+		<li>URL.createObjectURL：获得突破的URL</li>
+		<li>getAsFile：获得图片文件的数据</li>
+		
+	</ol>
+
+	<div id="imgHold"></div>  
+    
+
+<script src="js/jquery-1.9.1.min.js"></script>
+<script>
+
+$(window).on("paste", function(){  
+				   
+	
+	//console.log(event.clipboardData);
+				   
+	if (event.clipboardData) {  
+	
+	   $.each(event.clipboardData.items,function(i,item){  
+			console.log(i+":"+item.type);
+						
+			if (item.type.indexOf("image") !== -1) {  
+						   
+			   var blob = item.getAsFile();  
+			   var URL = window.URL || window.webkitURL;  
+			   var source = URL.createObjectURL(blob);  
+			   //console.log(source);
+			   var img = $("<img>").attr('src',source);
+			   $("#imgHold").append(img);
+							 
+			}  
+	  });  
+				   
+	}  
+
+
+});  
+
+</script>
+</body>
+</html>
