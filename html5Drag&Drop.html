@@ -53,6 +53,7 @@
 </div>
 
 
+
 <script>
 	
 	function $id(id){
@@ -61,13 +62,19 @@
 
 	// file drag hover
 	function FileDragHover(e) {
-		//console.log('hover');
 		e.stopPropagation();
 		e.preventDefault();
 		e.target.className = (e.type == "dragover" ? "hover" : "");
 	}
 
+	var addNum = (function(){
+		var i = 1;
+		return function(){
+			return i++;
+		}
+	})();
 
+	
 	function UploadFile(file){
 
 		var xhr = new XMLHttpRequest();
@@ -75,6 +82,12 @@
 		if(xhr.upload && file.type == 'image/jpeg' && file.size <= $id("MAX_FILE_SIZE").value){
 
 			// start upload
+			xhr.onreadystatechange=function(){
+				if (xhr.status == 200 && xhr.readyState == 4){
+					console.log(addNum());
+					console.log(xhr.responseText);
+				}
+			};
 			xhr.open("POST", $id("upload").action, true);
 			xhr.setRequestHeader("X_FILENAME", file.name);
 			xhr.send(file);
@@ -82,16 +95,23 @@
 
 	}
 
+	function addLog(msg){
+		$id('messages').innerHTML += msg + '<br>';
+	}
+
 	function traverseFileTree(item, path) {
+	  
+	  //此处item为FileEntry对象
+
 	  path = path || "";
 	  if (item.isFile) {
-	    // Get file
+	    // 读文件
 	    item.file(function(file) {
 	      UploadFile(file)
-	      console.log("File:", path + file.name);
+	      //$id("messages").innerHTML = $id("messages").innerHTML+"<br>File:", path + file.name;
 	    });
 	  } else if (item.isDirectory) {
-	    // Get folder contents
+	    // 读文件夹
 	    var dirReader = item.createReader();
 	    dirReader.readEntries(function(entries) {
 	      for (var i=0; i<entries.length; i++) {
@@ -110,31 +130,30 @@
 		//var files = e.target.files || e.dataTransfer.files;
 		var files = e.target.files || e.dataTransfer.items;
 		
+		console.log(files);
+
 		// process all File objects
 		for (var i = 0, f; f = files[i]; i++) {
-			
+
+
 			//console.log(f);
 
-
-			if(f.type!=''){
+			if(f.type != ''){
 
 				//获取实际文件
 				var ff = (typeof(f.kind)=='string') ? f.getAsFile() : f;
-
 				UploadFile(ff);
+				addLog('/'+ff.name)
 
 				//读取文件为DataURL格式
 				/*var reader = new FileReader();  
 				reader.onload = (function(ff){
 
 					return function(e){
-
 						//console.log(f.webkitRelativePath);						
 						$id('messages').innerHTML+="<img src=\""+ e.target.result +"\">"+(ff.webkitRelativePath?f.webkitRelativePath:ff.name)+"<br>";
-						
 			        }
 		        })(ff);
-
 		        reader.readAsDataURL(ff); */
 				
 			}else{
@@ -146,7 +165,8 @@
 				console.log(e.dataTransfer.items[i])
 				console.log(e.dataTransfer.items[i].getAsFile())
 				console.log(e.dataTransfer.items[i].webkitGetAsEntry())*/
-				console.log('拖拽文件夹')
+				//console.log(f)
+				//console.log('拖拽文件夹')
 				traverseFileTree(f.webkitGetAsEntry());
 
 			}
@@ -189,6 +209,10 @@
 	if (window.File && window.FileList && window.FileReader) {
 		Init();
 	}
+
+
+
+	
 </script>
 </body>
 </html>
